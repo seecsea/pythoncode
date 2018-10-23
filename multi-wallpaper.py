@@ -1,4 +1,5 @@
-#!C:/python25/python.exe
+#!C:/Python27amd64/python.exe
+# -*- coding: UTF-8 -*-
 
 # Code to rotate or set wallpaper under windows
 # Copyright (C) Andrew K. Milton 2007 - 2010
@@ -9,6 +10,20 @@
 
 # This will handle any configuration of an arbitrary number of monitors,
 # including offset boundaries.
+
+# http://gabbpuy.blogspot.com/2010/07/set-windows-wallpaper-from-python-for.html
+# another one : https://github.com/CodeOptimist/wallpaper-galpin
+# https://medium.com/@christopher.galpin/reddit-earthporn-for-multiple-monitors-9da3801f14ae
+
+# C:\Python27amd64\Scripts>pip install pillow
+# C:\Python27amd64\Scripts>pip install pywin32
+# C:\Python27amd64\Scripts>python -mpip install -U matplotlib    and download cv2 from offical web,copy pyd to site-Packages dirs,cv2 do not used in this script
+
+# Windows下多个显示器，为每个显示器设置各自适合的wallpaper，无论显示器何种组合。
+# 作者持续更新成了项目了： https://code.google.com/archive/p/pywallpaper/source/default/source
+
+# 这个程序必须是左边的监视器是主监视器，否则会搞反了，还需要认真读程序看看怎么修改。另外就是图片转换后，感觉起了一层雾，偏蓝，Blending = False即可不加入背景色蒙层。
+# 经测试，改程序目前对左边的显示器为主显示器时支持良好，如果是右边的显示器为主显示器，则图片贴反了，还在改进中
 
 
 import os
@@ -39,6 +54,9 @@ from PIL import Image, ImageDraw, ImageChops, ImageOps, ImageFilter
 # the primary monitor.
 #
 # Some options don't play nicely together.
+#
+# Blend是合成，就是合成背景图片和windows的那个系统背景颜色，会导致壁纸貌似有一层雾，Ratio在0-1之间，0完全就是背景颜色了，1则是基本没有混合背景颜色，而是正常的源背景图片，相当于Blending = False了
+
 
 """
 [global]
@@ -406,6 +424,8 @@ class Desktop(object):
     def preRotateImage(self,image):
         # Rotate 90 degrees.
         im = image.rotate(-90, resample = True, expand = True)
+        # 如果不想自动旋转，可以在conf文件里设置成false即可，也可以下面的0即不旋转
+        # im = image.rotate(0, resample=True, expand=True)
         return im
 
     def createWallPaperFromFile(self, pathToImage, monitor):
